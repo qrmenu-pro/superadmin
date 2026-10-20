@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Control Center - QRMenu Pro SaaS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        /* Animasi Sinyal Berkedip Merah ala Merekam */
+        @keyframes pulse-red {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(1.25); }
+        }
+        .animate-pulse-red { animation: pulse-red 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+        /* Efek Kilatan Glow pada Frame Login */
+        @keyframes glow-border {
+            0%, 100% { border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 0 25px rgba(99, 102, 241, 0.15); }
+            50% { border-color: rgba(239, 68, 68, 0.8); box-shadow: 0 0 40px rgba(239, 68, 68, 0.35); }
+        }
+        .glow-frame {
+            animation: glow-border 4s infinite;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500 selection:text-white min-h-screen flex flex-col">
+
+    <!-- LOGIN SUPER ADMIN SECTION DENGAN KILATAN GLOW & LOGO -->
+    <div id="loginSuperSection" class="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+        <!-- Background Blur Cahaya Mewah -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <!-- Frame Isian Login dengan Kilatan Glow -->
+        <div class="glow-frame border-2 p-8 rounded-3xl w-full max-w-md shadow-2xl relative z-10 backdrop-blur-xl">
+            <div class="text-center mb-8">
+                <!-- LOGO QRMenu-Pro -->
+                <div class="h-16 w-16 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-2xl mx-auto flex items-center justify-center font-bold text-xl text-white shadow-xl shadow-indigo-600/30 mb-4 border border-indigo-400/30">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                </div>
+                <h2 class="text-xl font-extrabold text-white tracking-tight">QRMenu-Pro Enterprise</h2>
+                <p class="text-xs text-indigo-400 font-semibold mt-1 uppercase tracking-wider">Super Admin Control Center</p>
+            </div>
+
+            <form id="formLoginSuper" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Username Super Admin</label>
+                    <input type="text" id="superUser" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition" placeholder="Masukkan username...">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password</label>
+                    <input type="password" id="superPass" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-3.5 rounded-xl text-sm transition shadow-lg shadow-indigo-600/30">Masuk Super Admin</button>
+            </form>
+            <div id="superLoginError" class="mt-4 hidden p-3 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs text-center font-medium"></div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD SUPER ADMIN (Hidden by Default) -->
+    <div id="dashboardSuperSection" class="hidden min-h-screen flex flex-col">
+        <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-xl sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="h-9 w-9 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">QR</div>
+                    <h1 class="text-base font-bold tracking-tight text-white">QRMenu-Pro <span class="text-indigo-400 font-medium text-xs ml-1 px-2 py-0.5 bg-indigo-500/10 rounded-full border border-indigo-500/20">Super Admin</span></h1>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Sinyal Berkedip Merah Ala Merekam -->
+                    <div class="flex items-center space-x-2.5 bg-slate-900 px-3.5 py-1.5 rounded-full border border-slate-800 shadow-inner">
+                        <span class="relative flex h-3 w-3">
+                            <span class="animate-ping-slow absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-600 animate-pulse-red"></span>
+                        </span>
+                        <span class="text-xs font-bold tracking-wide text-rose-400 uppercase">REC / System Active</span>
+                    </div>
+                    <button onclick="location.reload()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3.5 py-2 rounded-xl border border-slate-700 text-slate-300 font-semibold transition">Keluar</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full">
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold tracking-tight text-white">Super Admin Dashboard</h2>
+                <p class="text-sm text-slate-400 mt-1">Daftarkan bisnis baru, generate database otomatis, dan kelola lisensi sistem secara terpusat.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1">
+                    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+                        <h3 class="text-base font-semibold text-white mb-6 pb-4 border-b border-slate-800">Registrasi Bisnis / Resto Baru</h3>
+                        <form id="formResto" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nama Pemilik</label>
+                                <input type="text" id="nama" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="Cth: Budi Santoso">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nama Bisnis (Tanpa Spasi)</label>
+                                <input type="text" id="nama_resto" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="Cth: KedaiKopiSatu">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">No. WhatsApp</label>
+                                    <input type="text" id="wa" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="08xxx">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Email Klien</label>
+                                    <input type="email" id="email" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="mail@...com">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Alamat Bisnis</label>
+                                <textarea id="alamat" rows="2" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="Jl. Raya No. 123..."></textarea>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Username Admin</label>
+                                    <input type="text" id="username" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="adminbisnis">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password Admin</label>
+                                    <input type="password" id="password" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="••••••••">
+                                </div>
+                            </div>
+                            <button type="submit" id="btnSubmit" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 px-4 rounded-xl text-sm transition shadow-lg shadow-indigo-600/20">Simpan & Generate Sistem</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl">
+                        <h4 class="text-base font-semibold text-white mb-2">Informasi Sistem Super Admin</h4>
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            Pendaftaran bisnis baru akan otomatis membuat tab baru di Google Sheets dengan struktur laporan lengkap serta mengaktifkan lisensi eksklusif 1 tahun (365 hari). Panel Super Admin ini mendukung akses multi-device hingga maksimal 5 perangkat secara aman.
+                        </p>
+                    </div>
+                    <div id="alertBox" class="hidden bg-emerald-950/40 border border-emerald-500/30 rounded-3xl p-5 text-emerald-300">
+                        <h5 class="font-bold text-sm mb-1 text-emerald-200">Berhasil Didaftarkan!</h5>
+                        <p id="alertMessage" class="text-xs leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Script Logika Super Admin -->
+    <script>
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxWFYakEtuJanhbjHm0fhFfuTbAvkxAH8b-9fTtrN8JzcLmU8-8_LGdf3IsxeG8eHCM/exec";
+
+        const SUPER_USER = "superadmin"; 
+        const SUPER_PASS = "admin12345";  
+
+        document.getElementById('formLoginSuper').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const u = document.getElementById('superUser').value;
+            const p = document.getElementById('superPass').value;
+            const err = document.getElementById('superLoginError');
+
+            if (u === SUPER_USER && p === SUPER_PASS) {
+                let deviceId = localStorage.getItem('qrmenu_super_device_id');
+                let activeDevices = JSON.parse(localStorage.getItem('qrmenu_active_super_devices') || '[]');
+
+                if (!deviceId) {
+                    deviceId = 'SA-DEV-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                    localStorage.setItem('qrmenu_super_device_id', deviceId);
+                }
+
+                if (!activeDevices.includes(deviceId)) {
+                    if (activeDevices.length >= 5) {
+                        err.innerText = "Batas maksimal 5 perangkat untuk Super Admin telah tercapai!";
+                        err.classList.remove('hidden');
+                        return;
+                    }
+                    activeDevices.push(deviceId);
+                    localStorage.setItem('qrmenu_active_super_devices', JSON.stringify(activeDevices));
+                }
+
+                document.getElementById('loginSuperSection').classList.add('hidden');
+                document.getElementById('dashboardSuperSection').classList.remove('hidden');
+            } else {
+                err.innerText = "Username atau Password Super Admin salah!";
+                err.classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('formResto').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
+            btn.innerText = "Memproses...";
+
+            const payload = {
+                action: 'tambahResto',
+                nama: document.getElementById('nama').value,
+                nama_resto: document.getElementById('nama_resto').value.replace(/\s+/g, '_'),
+                wa: document.getElementById('wa').value,
+                email: document.getElementById('email').value,
+                alamat: document.getElementById('alamat').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+
+            fetch(GAS_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                setTimeout(() => {
+                    document.getElementById('alertBox').classList.remove('hidden');
+                    document.getElementById('alertMessage').innerText = `Bisnis "${payload.nama_resto}" berhasil didaftarkan! Tab sheet & token lisensi 1 tahun telah dibuat.`;
+                    document.getElementById('formResto').reset();
+                    btn.disabled = false;
+                    btn.innerText = "Simpan & Generate Sistem";
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>

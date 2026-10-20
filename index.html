@@ -12,14 +12,12 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         #map { height: 500px; width: 100%; border-radius: 1rem; }
         
-        /* Animasi Sinyal Berkedip Hijau/Merah */
         @keyframes pulse-dot {
             0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 10px rgba(225, 29, 72, 0.5); }
             50% { opacity: 0.4; transform: scale(1.2); box-shadow: 0 0 20px rgba(225, 29, 72, 0.8); }
         }
         .animate-pulse-dot { animation: pulse-dot 1.5s infinite ease-in-out; }
 
-        /* Frame Kilatan Elegan Terang */
         @keyframes glow-light {
             0%, 100% { border-color: rgba(79, 70, 229, 0.4); box-shadow: 0 10px 30px rgba(79, 70, 229, 0.1); }
             50% { border-color: rgba(79, 70, 229, 0.9); box-shadow: 0 15px 40px rgba(79, 70, 229, 0.2); }
@@ -42,7 +40,7 @@
 </head>
 <body class="page-bg-light text-slate-800 antialiased selection:bg-indigo-600 selection:text-white min-h-screen flex flex-col">
 
-    <!-- LOGIN SUPER ADMIN SECTION (TERANG & ELEGAN) -->
+    <!-- LOGIN SUPER ADMIN SECTION -->
     <div id="loginSuperSection" class="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
         <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
         
@@ -70,7 +68,7 @@
         </div>
     </div>
 
-    <!-- DASHBOARD SUPER ADMIN (CERAH, BERSIH, MEWAH) -->
+    <!-- DASHBOARD SUPER ADMIN -->
     <div id="dashboardSuperSection" class="hidden min-h-screen flex flex-col">
         <header class="border-b border-slate-200 bg-white/90 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
             <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
@@ -79,9 +77,10 @@
                     <h1 class="text-base font-bold tracking-tight text-slate-900">QRMenu-Pro <span class="text-indigo-600 font-semibold text-xs ml-1 px-2.5 py-0.5 bg-indigo-50 rounded-full border border-indigo-200">Super Admin</span></h1>
                 </div>
 
-                <!-- TAB NAVIGASI PANEL -->
+                <!-- TAB NAVIGASI PANEL (DITAMBAH MENU DATA KLIEN) -->
                 <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
                     <button id="btnTabRegistrasi" onclick="switchSuperTab('registrasi')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm">Registrasi Bisnis</button>
+                    <button id="btnTabDataKlien" onclick="switchSuperTab('dataklien')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">📊 Data Klien</button>
                     <button id="btnTabMonitoring" onclick="switchSuperTab('monitoring')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">🗺️ Pantau Koordinat Klien</button>
                 </div>
 
@@ -163,12 +162,45 @@
                 </div>
             </div>
 
-            <!-- TAB 2: PANTAU KOORDINAT KLIEN -->
+            <!-- TAB 2: DATA KLIEN (DIREKTORI & WHATSAPP OTOMATIS) -->
+            <div id="sectionDataKlien" class="hidden space-y-6">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Direktori Data Klien</h2>
+                        <p class="text-sm text-slate-600 mt-1">Kelola akun merchant dan kirim sapaan WhatsApp otomatis dengan sekali klik.</p>
+                    </div>
+                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md" onclick="loadDataKlien()">🔄 Refresh Data</button>
+                </div>
+
+                <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-wider">
+                                    <th class="p-4">Nama Toko</th>
+                                    <th class="p-4">Username</th>
+                                    <th class="p-4">Password</th>
+                                    <th class="p-4">Email</th>
+                                    <th class="p-4">Nomor WhatsApp</th>
+                                    <th class="p-4 text-center">Aksi Cepat</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelDataKlien" class="divide-y divide-slate-100 text-sm text-slate-700">
+                                <tr>
+                                    <td colspan="6" class="p-6 text-center text-slate-400">Memuat data klien...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: PANTAU KOORDINAT KLIEN -->
             <div id="sectionMonitoring" class="hidden space-y-6">
                 <div class="flex justify-between items-center mb-4">
                     <div>
                         <h2 class="text-2xl font-bold tracking-tight text-slate-900">Live Monitoring Koordinat Klien</h2>
-                        <p class="text-sm text-slate-600 mt-1">Titik koordinat otomatis diperbarui secara real-time saat klien merefresh halaman web mereka (tidak menumpuk).</p>
+                        <p class="text-sm text-slate-600 mt-1">Titik koordinat otomatis diperbarui secara real-time saat klien merefresh halaman web mereka.</p>
                     </div>
                     <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md" onclick="loadLokasiKlien()">🔄 Refresh Peta</button>
                 </div>
@@ -204,28 +236,87 @@
 
         function switchSuperTab(tab) {
             const regSec = document.getElementById('sectionRegistrasi');
+            const dataKlienSec = document.getElementById('sectionDataKlien');
             const monSec = document.getElementById('sectionMonitoring');
+            
             const btnReg = document.getElementById('btnTabRegistrasi');
+            const btnDataKlien = document.getElementById('btnTabDataKlien');
             const btnMon = document.getElementById('btnTabMonitoring');
+
+            // Reset semua tab
+            regSec.classList.add('hidden');
+            dataKlienSec.classList.add('hidden');
+            monSec.classList.add('hidden');
+            
+            btnReg.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900";
+            btnDataKlien.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900";
+            btnMon.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900";
+
+            if(monitoringInterval) clearInterval(monitoringInterval);
 
             if(tab === 'registrasi') {
                 regSec.classList.remove('hidden');
-                monSec.classList.add('hidden');
                 btnReg.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm";
-                btnMon.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900";
-                if(monitoringInterval) clearInterval(monitoringInterval);
-            } else {
-                regSec.classList.add('hidden');
+            } else if(tab === 'dataklien') {
+                dataKlienSec.classList.remove('hidden');
+                btnDataKlien.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm";
+                loadDataKlien();
+            } else if(tab === 'monitoring') {
                 monSec.classList.remove('hidden');
                 btnMon.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm";
-                btnReg.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900";
-                
                 setTimeout(() => {
                     initMap();
                     loadLokasiKlien();
                     monitoringInterval = setInterval(loadLokasiKlien, 15000);
                 }, 200);
             }
+        }
+
+        // Fungsi Load Data Klien ke Tabel & Format WhatsApp Otomatis
+        function loadDataKlien() {
+            const tbody = document.getElementById('tabelDataKlien');
+            tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Memuat data klien...</td></tr>`;
+
+            fetch(GAS_URL + "?action=getDataKlien")
+            .then(res => res.json())
+            .then(resData => {
+                let data = resData.data || [];
+                if(data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Belum ada klien terdaftar.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = "";
+                data.forEach(item => {
+                    // Format nomor WA (ubah 08... menjadi 628...)
+                    let rawWa = item.wa.toString().replace(/[^0-9]/g, '');
+                    if(rawWa.startsWith('0')) {
+                        rawWa = '62' + rawWa.substring(1);
+                    }
+
+                    // Teks sapaan otomatis sesuai permintaan
+                    let pesanWa = `terima kasih ${item.nama_resto} sudah menggunakan layanan QRMENU-PRO. Semoga bisnisnya Lancar,selalu sehat,dan keberkahan selalu mengiringi anda`;
+                    let waLink = `https://wa.me/${rawWa}?text=${encodeURIComponent(pesanWa)}`;
+
+                    let row = `
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="p-4 font-bold text-slate-900">🏢 ${item.nama_resto}</td>
+                            <td class="p-4 font-mono text-xs bg-slate-50/50">${item.username}</td>
+                            <td class="p-4 font-mono text-xs bg-slate-50/50">${item.password}</td>
+                            <td class="p-4 text-slate-600">${item.email}</td>
+                            <td class="p-4 text-slate-600">📱 ${item.wa}</td>
+                            <td class="p-4 text-center">
+                                <a href="${waLink}" target="_blank" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-sm shadow-emerald-600/20">
+                                    💬 Chat WhatsApp
+                                </a>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            }).catch(() => {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-rose-500">Gagal memuat data dari server.</td></tr>`;
+            });
         }
 
         function initMap() {
@@ -311,7 +402,7 @@
                 }
             }).catch(err => {
                 err.innerText = "Gagal terhubung ke server!";
-                err.classList.remove('hidden');
+                err.classList.add('hidden');
                 btn.disabled = false;
                 btn.innerText = "Masuk Super Admin";
             });
@@ -321,7 +412,7 @@
             e.preventDefault();
             const btn = document.getElementById('btnSubmit');
             btn.disabled = true;
-            btn.innerText = "Memproses....";
+            btn.innerText = "Memproses...";
 
             const payload = {
                 action: 'tambahResto',

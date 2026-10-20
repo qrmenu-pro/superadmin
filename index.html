@@ -57,7 +57,7 @@
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password</label>
                     <input type="password" id="superPass" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition" placeholder="••••••••">
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-3.5 rounded-xl text-sm transition shadow-lg shadow-indigo-600/30">Masuk Super Admin</button>
+                <button type="submit" id="btnSuperLogin" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-3.5 rounded-xl text-sm transition shadow-lg shadow-indigo-600/30">Masuk Super Admin</button>
             </form>
             <div id="superLoginError" class="mt-4 hidden p-3 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs text-center font-medium"></div>
         </div>
@@ -191,9 +191,6 @@
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxWFYakEtuJanhbjHm0fhFfuTbAvkxAH8b-9fTtrN8JzcLmU8-8_LGdf3IsxeG8eHCM/exec";
 
-        const SUPER_USER = "superadmin"; 
-        const SUPER_PASS = "admin12345";  
-
         let map = null;
         let markersLayer = [];
         let monitoringInterval = null;
@@ -277,37 +274,42 @@
             if(map) { map.setView([lat, lon], 16); }
         }
 
+        // VALIDASI LOGIN SUPER ADMIN KE GOOGLE SHEETS (BARIS 2 S.D. 6)
         document.getElementById('formLoginSuper').addEventListener('submit', function(e) {
             e.preventDefault();
-            const u = document.getElementById('superUser').value;
-            const p = document.getElementById('superPass').value;
+            const u = document.getElementById('superUser').value.trim();
+            const p = document.getElementById('superPass').value.trim();
             const err = document.getElementById('superLoginError');
+            const btn = document.getElementById('btnSuperLogin');
 
-            if (u === SUPER_USER && p === SUPER_PASS) {
-                let deviceId = localStorage.getItem('qrmenu_super_device_id');
-                let activeDevices = JSON.parse(localStorage.getItem('qrmenu_active_super_devices') || '[]');
+            btn.disabled = true;
+            btn.innerText = "Memeriksa Akun...";
+            err.classList.add('hidden');
 
-                if (!deviceId) {
-                    deviceId = 'SA-DEV-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-                    localStorage.setItem('qrmenu_super_device_id', deviceId);
-                }
-
-                if (!activeDevices.includes(deviceId)) {
-                    if (activeDevices.length >= 5) {
-                        err.innerText = "Batas maksimal 5 perangkat untuk Super Admin telah tercapai!";
-                        err.classList.remove('hidden');
-                        return;
-                    }
-                    activeDevices.push(deviceId);
-                    localStorage.setItem('qrmenu_active_super_devices', JSON.stringify(activeDevices));
-                }
-
-                document.getElementById('loginSuperSection').classList.add('hidden');
-                document.getElementById('dashboardSuperSection').classList.remove('hidden');
-            } else {
-                err.innerText = "Username atau Password Super Admin salah!";
-                err.classList.remove('hidden');
+            let deviceId = localStorage.getItem('qrmenu_super_device_id');
+            if (!deviceId) {
+                deviceId = 'SA-DEV-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                localStorage.setItem('qrmenu_super_device_id', deviceId);
             }
+
+            fetch(`${GAS_URL}?action=loginSuper&userid=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}&device_id=${deviceId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('loginSuperSection').classList.add('hidden');
+                    document.getElementById('dashboardSuperSection').classList.remove('hidden');
+                } else {
+                    err.innerText = data.message || "Username atau Password Super Admin salah!";
+                    err.classList.remove('hidden');
+                    btn.disabled = false;
+                    btn.innerText = "Masuk Super Admin";
+                }
+            }).catch(err => {
+                err.innerText = "Gagal terhubung ke server!";
+                err.classList.remove('hidden');
+                btn.disabled = false;
+                btn.innerText = "Masuk Super Admin";
+            });
         });
 
         document.getElementById('formResto').addEventListener('submit', function(e) {

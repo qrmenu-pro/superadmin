@@ -12,80 +12,87 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         #map { height: 500px; width: 100%; border-radius: 1rem; }
         
-        /* Animasi Sinyal Berkedip Merah ala Merekam */
-        @keyframes pulse-red {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.3; transform: scale(1.25); }
+        /* Animasi Sinyal Berkedip Hijau/Merah */
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 10px rgba(225, 29, 72, 0.5); }
+            50% { opacity: 0.4; transform: scale(1.2); box-shadow: 0 0 20px rgba(225, 29, 72, 0.8); }
         }
-        .animate-pulse-red { animation: pulse-red 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        .animate-pulse-dot { animation: pulse-dot 1.5s infinite ease-in-out; }
 
-        /* Efek Kilatan Glow pada Frame Login */
-        @keyframes glow-border {
-            0%, 100% { border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 0 25px rgba(99, 102, 241, 0.15); }
-            50% { border-color: rgba(239, 68, 68, 0.8); box-shadow: 0 0 40px rgba(239, 68, 68, 0.35); }
+        /* Frame Kilatan Elegan Terang */
+        @keyframes glow-light {
+            0%, 100% { border-color: rgba(79, 70, 229, 0.4); box-shadow: 0 10px 30px rgba(79, 70, 229, 0.1); }
+            50% { border-color: rgba(79, 70, 229, 0.9); box-shadow: 0 15px 40px rgba(79, 70, 229, 0.2); }
         }
-        .glow-frame {
-            animation: glow-border 4s infinite;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+        .glow-frame-light {
+            animation: glow-light 4s infinite;
+            background: #ffffff;
         }
 
-        .client-item { cursor: pointer; transition: background 0.2s; }
-        .client-item:hover { background-color: rgba(30, 41, 59, 0.9); }
+        .page-bg-light {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 0.6px, transparent 0.6px), radial-gradient(#cbd5e1 0.6px, #f8fafc 0.6px);
+            background-size: 32px 32px;
+            background-position: 0 0, 16px 16px;
+        }
+
+        .client-item { cursor: pointer; transition: all 0.2s; }
+        .client-item:hover { background-color: #f1f5f9; transform: translateY(-1px); }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500 selection:text-white min-h-screen flex flex-col">
+<body class="page-bg-light text-slate-800 antialiased selection:bg-indigo-600 selection:text-white min-h-screen flex flex-col">
 
-    <!-- LOGIN SUPER ADMIN SECTION DENGAN KILATAN GLOW & LOGO -->
+    <!-- LOGIN SUPER ADMIN SECTION (TERANG & ELEGAN) -->
     <div id="loginSuperSection" class="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
-        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
         
-        <div class="glow-frame border-2 p-8 rounded-3xl w-full max-w-md shadow-2xl relative z-10 backdrop-blur-xl">
+        <div class="glow-frame-light border-2 p-8 rounded-3xl w-full max-w-md shadow-2xl relative z-10">
             <div class="text-center mb-8">
-                <div class="h-16 w-16 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-2xl mx-auto flex items-center justify-center font-bold text-xl text-white shadow-xl shadow-indigo-600/30 mb-4 border border-indigo-400/30">
+                <div class="h-16 w-16 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-2xl mx-auto flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-indigo-600/30 mb-4">
                     <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 </div>
-                <h2 class="text-xl font-extrabold text-white tracking-tight">QRMenu-Pro Enterprise</h2>
-                <p class="text-xs text-indigo-400 font-semibold mt-1 uppercase tracking-wider">Super Admin Control Center</p>
+                <h2 class="text-xl font-bold text-slate-900 tracking-tight">QRMenu-Pro Enterprise</h2>
+                <p class="text-xs text-indigo-600 font-bold mt-1 uppercase tracking-wider">Super Admin Control Center</p>
             </div>
 
             <form id="formLoginSuper" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Username Super Admin</label>
-                    <input type="text" id="superUser" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition" placeholder="Masukkan username...">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Username Super Admin</label>
+                    <input type="text" id="superUser" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-indigo-600 transition" placeholder="Masukkan username...">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password</label>
-                    <input type="password" id="superPass" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition" placeholder="••••••••">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Password</label>
+                    <input type="password" id="superPass" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-indigo-600 transition" placeholder="••••••••">
                 </div>
-                <button type="submit" id="btnSuperLogin" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold py-3.5 rounded-xl text-sm transition shadow-lg shadow-indigo-600/30">Masuk Super Admin</button>
+                <button type="submit" id="btnSuperLogin" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-3.5 rounded-xl text-sm transition shadow-lg shadow-indigo-600/25">Masuk Super Admin</button>
             </form>
-            <div id="superLoginError" class="mt-4 hidden p-3 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 text-xs text-center font-medium"></div>
+            <div id="superLoginError" class="mt-4 hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs text-center font-medium"></div>
         </div>
     </div>
 
-    <!-- DASHBOARD SUPER ADMIN (Hidden by Default) -->
+    <!-- DASHBOARD SUPER ADMIN (CERAH, BERSIH, MEWAH) -->
     <div id="dashboardSuperSection" class="hidden min-h-screen flex flex-col">
-        <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-xl sticky top-0 z-50">
+        <header class="border-b border-slate-200 bg-white/90 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
             <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
                 <div class="flex items-center space-x-3">
-                    <div class="h-9 w-9 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-xl flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">QR</div>
-                    <h1 class="text-base font-bold tracking-tight text-white">QRMenu-Pro <span class="text-indigo-400 font-medium text-xs ml-1 px-2 py-0.5 bg-indigo-500/10 rounded-full border border-indigo-500/20">Super Admin</span></h1>
+                    <div class="h-9 w-9 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-xl flex items-center justify-center font-bold text-white shadow-md shadow-indigo-500/20">QR</div>
+                    <h1 class="text-base font-bold tracking-tight text-slate-900">QRMenu-Pro <span class="text-indigo-600 font-semibold text-xs ml-1 px-2.5 py-0.5 bg-indigo-50 rounded-full border border-indigo-200">Super Admin</span></h1>
                 </div>
 
-                <!-- TAB NAVIGASI MENU BARU DI PANEL -->
-                <div class="flex items-center gap-2 bg-slate-900 p-1 rounded-xl border border-slate-800">
+                <!-- TAB NAVIGASI PANEL -->
+                <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
                     <button id="btnTabRegistrasi" onclick="switchSuperTab('registrasi')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm">Registrasi Bisnis</button>
-                    <button id="btnTabMonitoring" onclick="switchSuperTab('monitoring')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white">🗺️ Pantau Koordinat Klien</button>
+                    <button id="btnTabMonitoring" onclick="switchSuperTab('monitoring')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">🗺️ Pantau Koordinat Klien</button>
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <div class="flex items-center space-x-2.5 bg-slate-900 px-3.5 py-1.5 rounded-full border border-slate-800 shadow-inner">
-                        <span class="relative flex h-3 w-3">
-                            <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-600 animate-pulse-red"></span>
+                    <div class="flex items-center space-x-2 bg-rose-50 px-3 py-1.5 rounded-full border border-rose-200 shadow-inner">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-600 animate-pulse-dot"></span>
                         </span>
-                        <span class="text-xs font-bold tracking-wide text-rose-400 uppercase">REC / System Active</span>
+                        <span class="text-xs font-extrabold tracking-wide text-rose-700 uppercase">System Active</span>
                     </div>
-                    <button onclick="location.reload()" class="bg-slate-800 hover:bg-slate-700 text-xs px-3.5 py-2 rounded-xl border border-slate-700 text-slate-300 font-semibold transition">Keluar</button>
+                    <button onclick="location.reload()" class="bg-slate-100 hover:bg-slate-200 text-xs px-3.5 py-2 rounded-xl border border-slate-300 text-slate-700 font-semibold transition">Keluar</button>
                 </div>
             </div>
         </header>
@@ -95,88 +102,88 @@
             <!-- TAB 1: REGISTRASI BISNIS -->
             <div id="sectionRegistrasi" class="space-y-6">
                 <div class="mb-4">
-                    <h2 class="text-2xl font-bold tracking-tight text-white">Super Admin Dashboard</h2>
-                    <p class="text-sm text-slate-400 mt-1">Daftarkan bisnis baru, generate database otomatis, dan kelola lisensi sistem secara terpusat.</p>
+                    <h2 class="text-2xl font-bold tracking-tight text-slate-900">Super Admin Dashboard</h2>
+                    <p class="text-sm text-slate-600 mt-1">Daftarkan bisnis baru, generate database otomatis, dan kelola lisensi sistem secara terpusat.</p>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div class="lg:col-span-1">
-                        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-                            <h3 class="text-base font-semibold text-white mb-6 pb-4 border-b border-slate-800">Registrasi Bisnis / Resto Baru</h3>
+                        <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm relative overflow-hidden">
+                            <h3 class="text-base font-bold text-slate-900 mb-6 pb-4 border-b border-slate-100">Registrasi Bisnis / Resto Baru</h3>
                             <form id="formResto" class="space-y-4">
                                 <div>
-                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nama Pemilik</label>
-                                    <input type="text" id="nama" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="Cth: Budi Santoso">
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Nama Pemilik</label>
+                                    <input type="text" id="nama" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="Cth: Budi Santoso">
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Nama Bisnis (Tanpa Spasi)</label>
-                                    <input type="text" id="nama_resto" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="Cth: KedaiKopiSatu">
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Nama Bisnis (Tanpa Spasi)</label>
+                                    <input type="text" id="nama_resto" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="Cth: KedaiKopiSatu">
                                 </div>
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">No. WhatsApp</label>
-                                        <input type="text" id="wa" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="08xxx">
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">No. WhatsApp</label>
+                                        <input type="text" id="wa" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="08xxx">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Email Klien</label>
-                                        <input type="email" id="email" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="mail@...com">
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Email Klien</label>
+                                        <input type="email" id="email" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="mail@...com">
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Alamat Bisnis</label>
-                                    <textarea id="alamat" rows="2" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="Jl. Raya No. 123..."></textarea>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Alamat Bisnis</label>
+                                    <textarea id="alamat" rows="2" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="Jl. Raya No. 123..."></textarea>
                                 </div>
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Username Admin</label>
-                                        <input type="text" id="username" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="adminbisnis">
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Username Admin</label>
+                                        <input type="text" id="username" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="adminbisnis">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Password Admin</label>
-                                        <input type="password" id="password" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500" placeholder="••••••••">
+                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Password Admin</label>
+                                        <input type="password" id="password" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="••••••••">
                                     </div>
                                 </div>
-                                <button type="submit" id="btnSubmit" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 px-4 rounded-xl text-sm transition shadow-lg shadow-indigo-600/20">Simpan & Generate Sistem</button>
+                                <button type="submit" id="btnSubmit" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl text-sm transition shadow-lg shadow-indigo-600/20">Simpan & Generate Sistem</button>
                             </form>
                         </div>
                     </div>
 
                     <div class="lg:col-span-2 space-y-6">
-                        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl">
-                            <h4 class="text-base font-semibold text-white mb-2">Informasi Sistem Super Admin</h4>
-                            <p class="text-sm text-slate-300 leading-relaxed">
+                        <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+                            <h4 class="text-base font-bold text-slate-900 mb-2">Informasi Sistem Super Admin</h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
                                 Pendaftaran bisnis baru akan otomatis membuat tab baru di Google Sheets dengan struktur laporan lengkap serta mengaktifkan lisensi eksklusif 1 tahun (365 hari). Panel Super Admin ini mendukung akses multi-device hingga maksimal 5 perangkat secara aman.
                             </p>
                         </div>
-                        <div id="alertBox" class="hidden bg-emerald-950/40 border border-emerald-500/30 rounded-3xl p-5 text-emerald-300">
-                            <h5 class="font-bold text-sm mb-1 text-emerald-200">Berhasil Didaftarkan!</h5>
+                        <div id="alertBox" class="hidden bg-emerald-50 border border-emerald-200 rounded-3xl p-5 text-emerald-800">
+                            <h5 class="font-bold text-sm mb-1 text-emerald-900">Berhasil Didaftarkan!</h5>
                             <p id="alertMessage" class="text-xs leading-relaxed"></p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 2: PANTAU KOORDINAT KLIEN (GEOLOKASI TERAKHIR) -->
+            <!-- TAB 2: PANTAU KOORDINAT KLIEN -->
             <div id="sectionMonitoring" class="hidden space-y-6">
                 <div class="flex justify-between items-center mb-4">
                     <div>
-                        <h2 class="text-2xl font-bold tracking-tight text-white">Live Monitoring Koordinat Klien</h2>
-                        <p class="text-sm text-slate-400 mt-1">Titik koordinat otomatis diperbarui secara real-time saat klien merefresh halaman web mereka (tidak menumpuk).</p>
+                        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Live Monitoring Koordinat Klien</h2>
+                        <p class="text-sm text-slate-600 mt-1">Titik koordinat otomatis diperbarui secara real-time saat klien merefresh halaman web mereka (tidak menumpuk).</p>
                     </div>
-                    <button class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md" onclick="loadLokasiKlien()">🔄 Refresh Peta</button>
+                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md" onclick="loadLokasiKlien()">🔄 Refresh Peta</button>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-1">
-                        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl h-[500px] overflow-y-auto">
-                            <h5 class="text-sm font-bold text-indigo-400 border-b border-slate-800 pb-3 mb-3">📍 Daftar Klien Aktif</h5>
+                        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm h-[500px] overflow-y-auto">
+                            <h5 class="text-sm font-bold text-indigo-600 border-b border-slate-100 pb-3 mb-3">📍 Daftar Klien Aktif</h5>
                             <div id="listClientContainer" class="space-y-2">
-                                <small class="text-slate-500 text-center block mt-10">Memuat data koordinat...</small>
+                                <small class="text-slate-400 text-center block mt-10">Memuat data koordinat...</small>
                             </div>
                         </div>
                     </div>
                     <div class="lg:col-span-2">
-                        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl">
+                        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm">
                             <div id="map"></div>
                         </div>
                     </div>
@@ -195,7 +202,6 @@
         let markersLayer = [];
         let monitoringInterval = null;
 
-        // Navigasi Tab Internal Super Admin
         function switchSuperTab(tab) {
             const regSec = document.getElementById('sectionRegistrasi');
             const monSec = document.getElementById('sectionMonitoring');
@@ -206,13 +212,13 @@
                 regSec.classList.remove('hidden');
                 monSec.classList.add('hidden');
                 btnReg.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm";
-                btnMon.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white";
+                btnMon.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900";
                 if(monitoringInterval) clearInterval(monitoringInterval);
             } else {
                 regSec.classList.add('hidden');
                 monSec.classList.remove('hidden');
                 btnMon.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm";
-                btnReg.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white";
+                btnReg.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900";
                 
                 setTimeout(() => {
                     initMap();
@@ -247,7 +253,7 @@
 
                     let data = resData.data || [];
                     if(data.length === 0) {
-                        listContainer.innerHTML = `<small class="text-slate-500 text-center block mt-10">Belum ada klien terdaftar.</small>`;
+                        listContainer.innerHTML = `<small class="text-slate-400 text-center block mt-10">Belum ada klien terdaftar.</small>`;
                         return;
                     }
 
@@ -258,10 +264,10 @@
                             markersLayer.push(marker);
 
                             let itemHtml = `
-                                <div class="client-item p-3 bg-slate-950 border border-slate-800 rounded-2xl cursor-pointer" onclick="panToLocation(${item.latitude}, ${item.longitude})">
-                                    <strong class="text-white text-xs">🏢 ${item.nama_resto}</strong><br>
-                                    <small class="text-slate-400 text-[11px]">📍 ${item.alamat}</small><br>
-                                    <small class="text-indigo-300 text-[11px]">🕒 ${item.waktu}</small>
+                                <div class="client-item p-3 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer" onclick="panToLocation(${item.latitude}, ${item.longitude})">
+                                    <strong class="text-slate-900 text-xs">🏢 ${item.nama_resto}</strong><br>
+                                    <small class="text-slate-600 text-[11px]">📍 ${item.alamat}</small><br>
+                                    <small class="text-indigo-600 font-semibold text-[11px]">🕒 ${item.waktu}</small>
                                 </div>`;
                             listContainer.innerHTML += itemHtml;
                         }
@@ -274,7 +280,6 @@
             if(map) { map.setView([lat, lon], 16); }
         }
 
-        // VALIDASI LOGIN SUPER ADMIN KE GOOGLE SHEETS (BARIS 2 S.D. 6)
         document.getElementById('formLoginSuper').addEventListener('submit', function(e) {
             e.preventDefault();
             const u = document.getElementById('superUser').value.trim();

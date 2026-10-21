@@ -143,7 +143,7 @@
                                     </div>
                                 </div>
 
-                                <!-- PILIHAN PAKET BERLANGGANAN (TAMBAHAN BARU) -->
+                                <!-- PILIHAN PAKET BERLANGGANAN -->
                                 <div class="pt-2">
                                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">Pilih Paket Berlangganan</label>
                                     <div class="space-y-2">
@@ -170,7 +170,6 @@
                                         </label>
                                     </div>
                                 </div>
-                                <!-- SELESAI TAMBAHAN PAKET -->
 
                                 <button type="submit" id="btnSubmit" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl text-sm transition shadow-lg shadow-indigo-600/20">Simpan & Generate Sistem</button>
                             </form>
@@ -181,7 +180,7 @@
                         <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
                             <h4 class="text-base font-bold text-slate-900 mb-2">Informasi Sistem Super Admin</h4>
                             <p class="text-sm text-slate-600 leading-relaxed">
-                                Pendaftaran bisnis baru akan otomatis membuat tab baru di Google Sheets dengan struktur laporan lengkap serta mengaktifkan masa aktif lisensi sesuai paket yang dipilih. Panel Super Admin ini mendukung akses multi-device hingga maksimal 5 perangkat secara aman.
+                                Pendaftaran bisnis baru akan otomatis membuat tab baru di Google Sheets dengan struktur laporan lengkap serta mengaktifkan masa aktif lisensi sesuai paket yang dipilih. Panel Super Admin ini didukung keamanan API Key terpusat.
                             </p>
                         </div>
                         <div id="alertBox" class="hidden bg-emerald-50 border border-emerald-200 rounded-3xl p-5 text-emerald-800">
@@ -259,6 +258,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxi7tce2iHuEPgYggs2ECsjgMJUWyA071G-tDUeNKuiw14lcdE-H9n2BdMLf68PPaHQ/exec";
+        const API_KEY = "QRMenuProSecret2026Bandung"; // Kunci rahasia pengaman API backend GAS
 
         let map = null;
         let markersLayer = [];
@@ -323,7 +323,7 @@
             const tbody = document.getElementById('tabelDataKlien');
             tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Memuat data klien...</td></tr>`;
 
-            fetch(GAS_URL + "?action=getDataKlien")
+            fetch(`${GAS_URL}?key=${API_KEY}&action=getDataKlien`)
             .then(res => res.json())
             .then(resData => {
                 let data = resData.data || [];
@@ -376,7 +376,7 @@
         }
 
         function loadLokasiKlien() {
-            fetch(GAS_URL + "?action=getLokasiKlien")
+            fetch(`${GAS_URL}?key=${API_KEY}&action=getLokasiKlien`)
             .then(res => res.json())
             .then(resData => {
                 if(map) {
@@ -432,7 +432,7 @@
                 localStorage.setItem('qrmenu_super_device_id', deviceId);
             }
 
-            fetch(`${GAS_URL}?action=loginSuper&userid=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}&device_id=${deviceId}`)
+            fetch(`${GAS_URL}?key=${API_KEY}&action=loginSuper&userid=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}&device_id=${deviceId}`)
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
@@ -445,7 +445,7 @@
                     btn.disabled = false;
                     btn.innerText = "Masuk Super Admin";
                 }
-            }).catch(errBox => {
+            }).catch(() => {
                 err.innerText = "Gagal terhubung ke server!";
                 err.classList.remove('hidden');
                 btn.disabled = false;
@@ -459,12 +459,12 @@
             btn.disabled = true;
             btn.innerText = "Memproses...";
 
-            // Mengambil pilihan paket yang dicentang user
             const selectedPaket = document.querySelector('input[name="paket_langganan"]:checked');
             const durasiHari = selectedPaket ? selectedPaket.value : "30";
             const namaPaket = selectedPaket ? selectedPaket.getAttribute('data-nama') : "Paket Bulanan";
 
             const payload = {
+                key: API_KEY,
                 action: 'tambahResto',
                 nama: document.getElementById('nama').value,
                 nama_resto: document.getElementById('nama_resto').value.replace(/\s+/g, '_'),
@@ -473,7 +473,7 @@
                 alamat: document.getElementById('alamat').value,
                 username: document.getElementById('username').value,
                 password: document.getElementById('password').value,
-                durasi_hari: durasiHari, // Dikirim ke GAS untuk hitung tanggal expired
+                durasi_hari: durasiHari,
                 paket: namaPaket
             };
 

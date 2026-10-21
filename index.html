@@ -142,6 +142,36 @@
                                         <input type="password" id="password" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="••••••••">
                                     </div>
                                 </div>
+
+                                <!-- PILIHAN PAKET BERLANGGANAN (TAMBAHAN BARU) -->
+                                <div class="pt-2">
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">Pilih Paket Berlangganan</label>
+                                    <div class="space-y-2">
+                                        <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:border-indigo-600 transition">
+                                            <div class="flex items-center gap-2">
+                                                <input type="radio" name="paket_langganan" value="30" data-nama="Paket Bulanan" checked class="text-indigo-600 focus:ring-indigo-500">
+                                                <span class="text-xs font-bold text-slate-800">Paket Bulanan (30 Hari)</span>
+                                            </div>
+                                            <span class="text-xs font-extrabold text-indigo-600">Rp 30.000</span>
+                                        </label>
+                                        <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:border-indigo-600 transition">
+                                            <div class="flex items-center gap-2">
+                                                <input type="radio" name="paket_langganan" value="180" data-nama="Paket 6 Bulan" class="text-indigo-600 focus:ring-indigo-500">
+                                                <span class="text-xs font-bold text-slate-800">Paket 6 Bulan (180 Hari)</span>
+                                            </div>
+                                            <span class="text-xs font-extrabold text-indigo-600">Rp 135.000</span>
+                                        </label>
+                                        <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:border-indigo-600 transition">
+                                            <div class="flex items-center gap-2">
+                                                <input type="radio" name="paket_langganan" value="365" data-nama="Paket 1 Tahun" class="text-indigo-600 focus:ring-indigo-500">
+                                                <span class="text-xs font-bold text-slate-800">Paket 1 Tahun (365 Hari)</span>
+                                            </div>
+                                            <span class="text-xs font-extrabold text-indigo-600">Rp 225.000</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- SELESAI TAMBAHAN PAKET -->
+
                                 <button type="submit" id="btnSubmit" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl text-sm transition shadow-lg shadow-indigo-600/20">Simpan & Generate Sistem</button>
                             </form>
                         </div>
@@ -151,7 +181,7 @@
                         <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
                             <h4 class="text-base font-bold text-slate-900 mb-2">Informasi Sistem Super Admin</h4>
                             <p class="text-sm text-slate-600 leading-relaxed">
-                                Pendaftaran bisnis baru akan otomatis membuat tab baru di Google Sheets dengan struktur laporan lengkap serta mengaktifkan lisensi eksklusif 1 tahun (365 hari). Panel Super Admin ini mendukung akses multi-device hingga maksimal 5 perangkat secara aman.
+                                Pendaftaran bisnis baru akan otomatis membuat tab baru di Google Sheets dengan struktur laporan lengkap serta mengaktifkan masa aktif lisensi sesuai paket yang dipilih. Panel Super Admin ini mendukung akses multi-device hingga maksimal 5 perangkat secara aman.
                             </p>
                         </div>
                         <div id="alertBox" class="hidden bg-emerald-50 border border-emerald-200 rounded-3xl p-5 text-emerald-800">
@@ -234,7 +264,6 @@
         let markersLayer = [];
         let monitoringInterval = null;
 
-        // Cek Sesi Tersimpan (Stay Logged In) saat pertama kali buka halaman
         window.addEventListener('DOMContentLoaded', () => {
             const isSuperLoggedIn = localStorage.getItem('qrmenu_super_logged_in');
             if (isSuperLoggedIn === 'true') {
@@ -407,7 +436,6 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
-                    // Simpan status login di localStorage agar masuk otomatis selamanya
                     localStorage.setItem('qrmenu_super_logged_in', 'true');
                     document.getElementById('loginSuperSection').classList.add('hidden');
                     document.getElementById('dashboardSuperSection').classList.remove('hidden');
@@ -431,6 +459,11 @@
             btn.disabled = true;
             btn.innerText = "Memproses...";
 
+            // Mengambil pilihan paket yang dicentang user
+            const selectedPaket = document.querySelector('input[name="paket_langganan"]:checked');
+            const durasiHari = selectedPaket ? selectedPaket.value : "30";
+            const namaPaket = selectedPaket ? selectedPaket.getAttribute('data-nama') : "Paket Bulanan";
+
             const payload = {
                 action: 'tambahResto',
                 nama: document.getElementById('nama').value,
@@ -439,7 +472,9 @@
                 email: document.getElementById('email').value,
                 alamat: document.getElementById('alamat').value,
                 username: document.getElementById('username').value,
-                password: document.getElementById('password').value
+                password: document.getElementById('password').value,
+                durasi_hari: durasiHari, // Dikirim ke GAS untuk hitung tanggal expired
+                paket: namaPaket
             };
 
             fetch(GAS_URL, {
@@ -450,7 +485,7 @@
             }).then(() => {
                 setTimeout(() => {
                     document.getElementById('alertBox').classList.remove('hidden');
-                    document.getElementById('alertMessage').innerText = `Bisnis "${payload.nama_resto}" berhasil didaftarkan! Tab sheet & token lisensi 1 tahun telah dibuat.`;
+                    document.getElementById('alertMessage').innerText = `Bisnis "${payload.nama_resto}" berhasil didaftarkan dengan ${namaPaket} (${durasiHari} Hari)! Tab sheet & masa aktif lisensi telah dibuat.`;
                     document.getElementById('formResto').reset();
                     btn.disabled = false;
                     btn.innerText = "Simpan & Generate Sistem";

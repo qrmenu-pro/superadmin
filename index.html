@@ -77,7 +77,7 @@
                     <h1 class="text-base font-bold tracking-tight text-slate-900">QRMenu-Pro <span class="text-indigo-600 font-semibold text-xs ml-1 px-2.5 py-0.5 bg-indigo-50 rounded-full border border-indigo-200">Super Admin</span></h1>
                 </div>
 
-                <!-- TAB NAVIGASI PANEL (DITAMBAH MENU DATA KLIEN) -->
+                <!-- TAB NAVIGASI PANEL -->
                 <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
                     <button id="btnTabRegistrasi" onclick="switchSuperTab('registrasi')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm">Registrasi Bisnis</button>
                     <button id="btnTabDataKlien" onclick="switchSuperTab('dataklien')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">📊 Data Klien</button>
@@ -91,7 +91,7 @@
                         </span>
                         <span class="text-xs font-extrabold tracking-wide text-rose-700 uppercase">System Active</span>
                     </div>
-                    <button onclick="location.reload()" class="bg-slate-100 hover:bg-slate-200 text-xs px-3.5 py-2 rounded-xl border border-slate-300 text-slate-700 font-semibold transition">Keluar</button>
+                    <button onclick="logoutSuperAdmin()" class="bg-slate-100 hover:bg-slate-200 text-xs px-3.5 py-2 rounded-xl border border-slate-300 text-slate-700 font-semibold transition">Keluar</button>
                 </div>
             </div>
         </header>
@@ -162,7 +162,7 @@
                 </div>
             </div>
 
-            <!-- TAB 2: DATA KLIEN (DIREKTORI & WHATSAPP OTOMATIS) -->
+            <!-- TAB 2: DATA KLIEN -->
             <div id="sectionDataKlien" class="hidden space-y-6">
                 <div class="flex justify-between items-center mb-4">
                     <div>
@@ -234,6 +234,25 @@
         let markersLayer = [];
         let monitoringInterval = null;
 
+        // Cek Sesi Tersimpan (Stay Logged In) saat pertama kali buka halaman
+        window.addEventListener('DOMContentLoaded', () => {
+            const isSuperLoggedIn = localStorage.getItem('qrmenu_super_logged_in');
+            if (isSuperLoggedIn === 'true') {
+                document.getElementById('loginSuperSection').classList.add('hidden');
+                document.getElementById('dashboardSuperSection').classList.remove('hidden');
+            } else {
+                document.getElementById('loginSuperSection').classList.remove('hidden');
+                document.getElementById('dashboardSuperSection').classList.add('hidden');
+            }
+        });
+
+        function logoutSuperAdmin() {
+            if (confirm("Apakah Anda yakin ingin keluar dari Super Admin?")) {
+                localStorage.removeItem('qrmenu_super_logged_in');
+                location.reload();
+            }
+        }
+
         function switchSuperTab(tab) {
             const regSec = document.getElementById('sectionRegistrasi');
             const dataKlienSec = document.getElementById('sectionDataKlien');
@@ -243,7 +262,6 @@
             const btnDataKlien = document.getElementById('btnTabDataKlien');
             const btnMon = document.getElementById('btnTabMonitoring');
 
-            // Reset semua tab
             regSec.classList.add('hidden');
             dataKlienSec.classList.add('hidden');
             monSec.classList.add('hidden');
@@ -272,7 +290,6 @@
             }
         }
 
-        // Fungsi Load Data Klien ke Tabel & Format WhatsApp Otomatis
         function loadDataKlien() {
             const tbody = document.getElementById('tabelDataKlien');
             tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Memuat data klien...</td></tr>`;
@@ -288,13 +305,11 @@
 
                 tbody.innerHTML = "";
                 data.forEach(item => {
-                    // Format nomor WA (ubah 08... menjadi 628...)
                     let rawWa = item.wa.toString().replace(/[^0-9]/g, '');
                     if(rawWa.startsWith('0')) {
                         rawWa = '62' + rawWa.substring(1);
                     }
 
-                    // Teks sapaan otomatis sesuai permintaan
                     let pesanWa = `terima kasih ${item.nama_resto} sudah menggunakan layanan QRMENU-PRO. Semoga bisnisnya Lancar,selalu sehat,dan keberkahan selalu mengiringi anda`;
                     let waLink = `https://wa.me/${rawWa}?text=${encodeURIComponent(pesanWa)}`;
 
@@ -392,6 +407,8 @@
             .then(res => res.json())
             .then(data => {
                 if (data.status === 'success') {
+                    // Simpan status login di localStorage agar masuk otomatis selamanya
+                    localStorage.setItem('qrmenu_super_logged_in', 'true');
                     document.getElementById('loginSuperSection').classList.add('hidden');
                     document.getElementById('dashboardSuperSection').classList.remove('hidden');
                 } else {
@@ -400,9 +417,9 @@
                     btn.disabled = false;
                     btn.innerText = "Masuk Super Admin";
                 }
-            }).catch(err => {
+            }).catch(errBox => {
                 err.innerText = "Gagal terhubung ke server!";
-                err.classList.add('hidden');
+                err.classList.remove('hidden');
                 btn.disabled = false;
                 btn.innerText = "Masuk Super Admin";
             });

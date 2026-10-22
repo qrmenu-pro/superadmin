@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Super Admin Control Center - QRMenu Pro SaaS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Leaflet CSS untuk Peta -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
         #map { height: 500px; width: 100%; border-radius: 1rem; }
-        
+
         @keyframes pulse-dot {
             0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 10px rgba(225, 29, 72, 0.5); }
             50% { opacity: 0.4; transform: scale(1.2); box-shadow: 0 0 20px rgba(225, 29, 72, 0.8); }
@@ -22,10 +21,7 @@
             0%, 100% { border-color: rgba(79, 70, 229, 0.4); box-shadow: 0 10px 30px rgba(79, 70, 229, 0.1); }
             50% { border-color: rgba(79, 70, 229, 0.9); box-shadow: 0 15px 40px rgba(79, 70, 229, 0.2); }
         }
-        .glow-frame-light {
-            animation: glow-light 4s infinite;
-            background: #ffffff;
-        }
+        .glow-frame-light { animation: glow-light 4s infinite; background: #ffffff; }
 
         .page-bg-light {
             background-color: #f8fafc;
@@ -40,10 +36,13 @@
 </head>
 <body class="page-bg-light text-slate-800 antialiased selection:bg-indigo-600 selection:text-white min-h-screen flex flex-col">
 
-    <!-- LOGIN SUPER ADMIN SECTION -->
-    <div id="loginSuperSection" class="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+    <!-- TOAST -->
+    <div id="toastBox" class="fixed top-4 right-4 z-[100] space-y-2 w-80 max-w-[calc(100vw-2rem)]"></div>
+
+    <!-- LOGIN SUPER ADMIN -->
+    <div id="loginSuperSection" class="hidden min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
         <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        
+
         <div class="glow-frame-light border-2 p-8 rounded-3xl w-full max-w-md shadow-2xl relative z-10">
             <div class="text-center mb-8">
                 <div class="h-16 w-16 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-2xl mx-auto flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-indigo-600/30 mb-4">
@@ -56,13 +55,13 @@
             <form id="formLoginSuper" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Username Super Admin</label>
-                    <input type="text" id="superUser" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-indigo-600 transition" placeholder="Masukkan username...">
+                    <input type="text" id="superUser" required autocomplete="username" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-indigo-600 transition" placeholder="Masukkan username...">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Password</label>
-                    <input type="password" id="superPass" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-indigo-600 transition" placeholder="••••••••">
+                    <input type="password" id="superPass" required autocomplete="current-password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-indigo-600 transition" placeholder="••••••••">
                 </div>
-                <button type="submit" id="btnSuperLogin" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-semibold py-3.5 rounded-xl text-sm transition shadow-lg shadow-indigo-600/25">Masuk Super Admin</button>
+                <button type="submit" id="btnSuperLogin" class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 disabled:opacity-60 text-white font-semibold py-3.5 rounded-xl text-sm transition shadow-lg shadow-indigo-600/25">Masuk Super Admin</button>
             </form>
             <div id="superLoginError" class="mt-4 hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs text-center font-medium"></div>
         </div>
@@ -71,21 +70,20 @@
     <!-- DASHBOARD SUPER ADMIN -->
     <div id="dashboardSuperSection" class="hidden min-h-screen flex flex-col">
         <header class="border-b border-slate-200 bg-white/90 backdrop-blur-xl sticky top-0 z-50 shadow-sm">
-            <div class="max-w-7xl mx-auto px-6 h-16 flex justify-between items-center">
+            <div class="max-w-7xl mx-auto px-6 min-h-16 py-2 flex flex-wrap gap-3 justify-between items-center">
                 <div class="flex items-center space-x-3">
                     <div class="h-9 w-9 bg-gradient-to-tr from-indigo-600 to-violet-500 rounded-xl flex items-center justify-center font-bold text-white shadow-md shadow-indigo-500/20">QR</div>
                     <h1 class="text-base font-bold tracking-tight text-slate-900">QRMenu-Pro <span class="text-indigo-600 font-semibold text-xs ml-1 px-2.5 py-0.5 bg-indigo-50 rounded-full border border-indigo-200">Super Admin</span></h1>
                 </div>
 
-                <!-- TAB NAVIGASI PANEL -->
                 <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner">
                     <button id="btnTabRegistrasi" onclick="switchSuperTab('registrasi')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm">Registrasi Bisnis</button>
                     <button id="btnTabDataKlien" onclick="switchSuperTab('dataklien')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">📊 Data Klien</button>
-                    <button id="btnTabMonitoring" onclick="switchSuperTab('monitoring')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">🗺️ Pantau Koordinat Klien</button>
+                    <button id="btnTabMonitoring" onclick="switchSuperTab('monitoring')" class="px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">🗺️ Pantau Koordinat</button>
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <div class="flex items-center space-x-2 bg-rose-50 px-3 py-1.5 rounded-full border border-rose-200 shadow-inner">
+                    <div class="hidden sm:flex items-center space-x-2 bg-rose-50 px-3 py-1.5 rounded-full border border-rose-200 shadow-inner">
                         <span class="relative flex h-2.5 w-2.5">
                             <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-600 animate-pulse-dot"></span>
                         </span>
@@ -97,7 +95,7 @@
         </header>
 
         <main class="max-w-7xl mx-auto px-6 py-10 flex-1 w-full">
-            
+
             <!-- TAB 1: REGISTRASI BISNIS -->
             <div id="sectionRegistrasi" class="space-y-6">
                 <div class="mb-4">
@@ -116,12 +114,13 @@
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Nama Bisnis (Tanpa Spasi)</label>
-                                    <input type="text" id="nama_resto" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="Cth: KedaiKopiSatu">
+                                    <input type="text" id="nama_resto" required minlength="3" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="Cth: KedaiKopiSatu">
+                                    <p class="text-[11px] text-slate-400 mt-1">Spasi otomatis menjadi garis bawah (_). Nama ini menjadi nama tab database.</p>
                                 </div>
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
                                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">No. WhatsApp</label>
-                                        <input type="text" id="wa" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="08xxx">
+                                        <input type="tel" id="wa" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="08xxx">
                                     </div>
                                     <div>
                                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Email Klien</label>
@@ -135,15 +134,17 @@
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
                                         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Username Admin</label>
-                                        <input type="text" id="username" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="adminbisnis">
+                                        <input type="text" id="username" required autocomplete="off" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="adminbisnis">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1.5">Password Admin</label>
-                                        <input type="password" id="password" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="••••••••">
+                                        <div class="flex justify-between items-center mb-1.5">
+                                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600">Password</label>
+                                            <button type="button" onclick="buatPasswordAcak()" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-800">Buat acak</button>
+                                        </div>
+                                        <input type="password" id="password" required minlength="6" autocomplete="new-password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-indigo-600" placeholder="min. 6 karakter">
                                     </div>
                                 </div>
 
-                                <!-- PILIHAN PAKET BERLANGGANAN -->
                                 <div class="pt-2">
                                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">Pilih Paket Berlangganan</label>
                                     <div class="space-y-2">
@@ -152,26 +153,26 @@
                                                 <input type="radio" name="paket_langganan" value="30" data-nama="Paket Bulanan" checked class="text-indigo-600 focus:ring-indigo-500">
                                                 <span class="text-xs font-bold text-slate-800">Paket Bulanan (30 Hari)</span>
                                             </div>
-                                            <span class="text-xs font-extrabold text-indigo-600">Rp 20.000</span>
+                                            <span class="text-xs font-extrabold text-indigo-600">Rp 30.000</span>
                                         </label>
                                         <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:border-indigo-600 transition">
                                             <div class="flex items-center gap-2">
                                                 <input type="radio" name="paket_langganan" value="180" data-nama="Paket 6 Bulan" class="text-indigo-600 focus:ring-indigo-500">
                                                 <span class="text-xs font-bold text-slate-800">Paket 6 Bulan (180 Hari)</span>
                                             </div>
-                                            <span class="text-xs font-extrabold text-indigo-600">Rp 110.000</span>
+                                            <span class="text-xs font-extrabold text-indigo-600">Rp 135.000</span>
                                         </label>
                                         <label class="flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-slate-50 cursor-pointer hover:border-indigo-600 transition">
                                             <div class="flex items-center gap-2">
                                                 <input type="radio" name="paket_langganan" value="365" data-nama="Paket 1 Tahun" class="text-indigo-600 focus:ring-indigo-500">
                                                 <span class="text-xs font-bold text-slate-800">Paket 1 Tahun (365 Hari)</span>
                                             </div>
-                                            <span class="text-xs font-extrabold text-indigo-600">Rp 185.000</span>
+                                            <span class="text-xs font-extrabold text-indigo-600">Rp 225.000</span>
                                         </label>
                                     </div>
                                 </div>
 
-                                <button type="submit" id="btnSubmit" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl text-sm transition shadow-lg shadow-indigo-600/20">Simpan & Generate Sistem</button>
+                                <button type="submit" id="btnSubmit" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-semibold py-3 px-4 rounded-xl text-sm transition shadow-lg shadow-indigo-600/20">Simpan & Generate Sistem</button>
                             </form>
                         </div>
                     </div>
@@ -180,25 +181,25 @@
                         <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
                             <h4 class="text-base font-bold text-slate-900 mb-2">Informasi Sistem Super Admin</h4>
                             <p class="text-sm text-slate-600 leading-relaxed">
-                                Pendaftaran bisnis baru akan otomatis membuat tab baru di Google Sheets dengan struktur laporan lengkap serta mengaktifkan masa aktif lisensi sesuai paket yang dipilih. Panel Super Admin ini didukung keamanan API Key terpusat.
+                                Pendaftaran bisnis baru otomatis membuat tab menu, tab order, dan folder Drive klien, lalu mengaktifkan masa lisensi sesuai paket. Username dan nama bisnis harus unik. Akses panel ini dilindungi sesi login Super Admin (berlaku sekitar 6 jam).
                             </p>
                         </div>
-                        <div id="alertBox" class="hidden bg-emerald-50 border border-emerald-200 rounded-3xl p-5 text-emerald-800">
-                            <h5 class="font-bold text-sm mb-1 text-emerald-900">Berhasil Didaftarkan!</h5>
-                            <p id="alertMessage" class="text-xs leading-relaxed"></p>
-                        </div>
+                        <div id="alertBox" class="hidden rounded-3xl p-5 border"></div>
                     </div>
                 </div>
             </div>
 
             <!-- TAB 2: DATA KLIEN -->
             <div id="sectionDataKlien" class="hidden space-y-6">
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex flex-wrap gap-3 justify-between items-center mb-4">
                     <div>
                         <h2 class="text-2xl font-bold tracking-tight text-slate-900">Direktori Data Klien</h2>
-                        <p class="text-sm text-slate-600 mt-1">Kelola akun merchant dan kirim sapaan WhatsApp otomatis dengan sekali klik.</p>
+                        <p class="text-sm text-slate-600 mt-1">Kelola akun merchant, pantau masa aktif lisensi, dan kirim sapaan WhatsApp dengan sekali klik.</p>
                     </div>
-                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md" onclick="loadDataKlien()">🔄 Refresh Data</button>
+                    <div class="flex items-center gap-2">
+                        <input type="search" id="cariKlien" oninput="renderDataKlien()" placeholder="Cari nama / username / WA..." class="bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs w-56 focus:outline-none focus:border-indigo-600">
+                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md" onclick="loadDataKlien()">🔄 Refresh</button>
+                    </div>
                 </div>
 
                 <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
@@ -210,41 +211,55 @@
                                     <th class="p-4">Username</th>
                                     <th class="p-4">Password</th>
                                     <th class="p-4">Email</th>
-                                    <th class="p-4">Nomor WhatsApp</th>
-                                    <th class="p-4 text-center">Aksi Cepat</th>
+                                    <th class="p-4">WhatsApp</th>
+                                    <th class="p-4">Paket & Masa Aktif</th>
+                                    <th class="p-4">Perangkat</th>
+                                    <th class="p-4 text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="tabelDataKlien" class="divide-y divide-slate-100 text-sm text-slate-700">
-                                <tr>
-                                    <td colspan="6" class="p-6 text-center text-slate-400">Memuat data klien...</td>
-                                </tr>
+                                <tr><td colspan="8" class="p-6 text-center text-slate-400">Memuat data klien...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
+                <p id="infoJumlahKlien" class="text-xs text-slate-500 font-semibold"></p>
             </div>
 
-            <!-- TAB 3: PANTAU KOORDINAT KLIEN -->
+            <!-- TAB 3: PANTAU KOORDINAT -->
             <div id="sectionMonitoring" class="hidden space-y-6">
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex flex-wrap gap-3 justify-between items-center mb-4">
                     <div>
-                        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Live Monitoring Koordinat Klien</h2>
-                        <p class="text-sm text-slate-600 mt-1">Titik koordinat otomatis diperbarui secara real-time saat klien merefresh halaman web mereka.</p>
+                        <h2 class="text-2xl font-bold tracking-tight text-slate-900">Live Monitoring Koordinat</h2>
+                        <p class="text-sm text-slate-600 mt-1">Lokasi klien diperbarui saat klien membuka panelnya; lokasi pembeli saat membuka katalog atau memesan. Peta menyegarkan diri tiap 15 detik.</p>
                     </div>
-                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md" onclick="loadLokasiKlien()">🔄 Refresh Peta</button>
+                    <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
+                            <button id="btnModeKlien" onclick="setLokasiMode('klien')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm">🏢 Klien</button>
+                            <button id="btnModePembeli" onclick="setLokasiMode('pembeli')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">🙋 Pembeli</button>
+                            <button id="btnModeSemua" onclick="setLokasiMode('semua')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">Semua</button>
+                        </div>
+                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition shadow-md" onclick="loadLokasi(true)">🔄 Refresh Peta</button>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-1">
                         <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm h-[500px] overflow-y-auto">
-                            <h5 class="text-sm font-bold text-indigo-600 border-b border-slate-100 pb-3 mb-3">📍 Daftar Klien Aktif</h5>
                             <div id="listClientContainer" class="space-y-2">
                                 <small class="text-slate-400 text-center block mt-10">Memuat data koordinat...</small>
                             </div>
                         </div>
                     </div>
                     <div class="lg:col-span-2">
-                        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm">
+                        <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm space-y-3">
+                            <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-semibold text-slate-600">
+                                <div class="flex items-center gap-4">
+                                    <span class="flex items-center gap-1.5"><span class="inline-block h-3 w-3 rounded-full bg-indigo-500 border-2 border-indigo-700"></span> Klien</span>
+                                    <span class="flex items-center gap-1.5"><span class="inline-block h-3 w-3 rounded-full bg-emerald-500 border-2 border-emerald-700"></span> Pembeli</span>
+                                </div>
+                                <span id="infoUpdateMap" class="text-slate-400"></span>
+                            </div>
                             <div id="map"></div>
                         </div>
                     </div>
@@ -254,168 +269,142 @@
         </main>
     </div>
 
-    <!-- Leaflet JS & Script Logika Super Admin -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // ====================== KONFIGURASI ======================
         const GAS_URL = "https://script.google.com/macros/s/AKfycbxi7tce2iHuEPgYggs2ECsjgMJUWyA071G-tDUeNKuiw14lcdE-H9n2BdMLf68PPaHQ/exec";
-        const API_KEY = "QRMenuProSecret2026Bandung"; // Kunci rahasia pengaman API backend GAS
+        const API_KEY = "QRMenuProSecret2026Bandung";
+        const PANEL_KLIEN_URL = "";                       // isi dengan link panel klien jika ingin ikut dikirim di pesan WA kredensial
+        const SESSION_MS = 5.5 * 60 * 60 * 1000;          // token GAS berlaku 6 jam; sesi lokal dibuat sedikit lebih pendek
+        const LOKASI_REFRESH_MS = 15000;
 
+        const TAB_ACTIVE = "px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm";
+        const TAB_IDLE = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900";
+        const MODE_ACTIVE = "px-3 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm";
+        const MODE_IDLE = "px-3 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900";
+
+        // ====================== STATE ======================
+        let superToken = null;
         let map = null;
-        let markersLayer = [];
+        let markersGroup = null;
+        let markerRefs = {};
         let monitoringInterval = null;
+        let lokasiMode = 'klien';
+        let dataKlienCache = [];
+        let dataLokKlien = [];
+        let dataLokPembeli = [];
+        let fitPending = true;
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const isSuperLoggedIn = localStorage.getItem('qrmenu_super_logged_in');
-            if (isSuperLoggedIn === 'true') {
-                document.getElementById('loginSuperSection').classList.add('hidden');
-                document.getElementById('dashboardSuperSection').classList.remove('hidden');
-            } else {
-                document.getElementById('loginSuperSection').classList.remove('hidden');
-                document.getElementById('dashboardSuperSection').classList.add('hidden');
-            }
-        });
+        // ====================== SESI ======================
+        function simpanSesi(token) {
+            localStorage.setItem('qrmenu_super_token', token);
+            localStorage.setItem('qrmenu_super_token_exp', String(Date.now() + SESSION_MS));
+        }
+
+        function bacaSesi() {
+            const t = localStorage.getItem('qrmenu_super_token');
+            const exp = parseInt(localStorage.getItem('qrmenu_super_token_exp') || '0', 10);
+            if (t && Date.now() < exp) return t;
+            hapusSesi();
+            return null;
+        }
+
+        function hapusSesi() {
+            localStorage.removeItem('qrmenu_super_token');
+            localStorage.removeItem('qrmenu_super_token_exp');
+            localStorage.removeItem('qrmenu_super_logged_in');   // sisa flag versi lama
+        }
+
+        function tampilkanLogin() {
+            document.getElementById('loginSuperSection').classList.remove('hidden');
+            document.getElementById('dashboardSuperSection').classList.add('hidden');
+        }
+
+        function tampilkanDashboard() {
+            document.getElementById('loginSuperSection').classList.add('hidden');
+            document.getElementById('dashboardSuperSection').classList.remove('hidden');
+        }
+
+        function sesiBerakhir() {
+            if (monitoringInterval) { clearInterval(monitoringInterval); monitoringInterval = null; }
+            hapusSesi();
+            superToken = null;
+            tampilkanLogin();
+            toast('Sesi Super Admin berakhir. Silakan login kembali.', 'warn');
+        }
 
         function logoutSuperAdmin() {
             if (confirm("Apakah Anda yakin ingin keluar dari Super Admin?")) {
-                localStorage.removeItem('qrmenu_super_logged_in');
+                hapusSesi();
                 location.reload();
             }
         }
 
-        function switchSuperTab(tab) {
-            const regSec = document.getElementById('sectionRegistrasi');
-            const dataKlienSec = document.getElementById('sectionDataKlien');
-            const monSec = document.getElementById('sectionMonitoring');
-            
-            const btnReg = document.getElementById('btnTabRegistrasi');
-            const btnDataKlien = document.getElementById('btnTabDataKlien');
-            const btnMon = document.getElementById('btnTabMonitoring');
-
-            regSec.classList.add('hidden');
-            dataKlienSec.classList.add('hidden');
-            monSec.classList.add('hidden');
-            
-            btnReg.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900";
-            btnDataKlien.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900";
-            btnMon.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900";
-
-            if(monitoringInterval) clearInterval(monitoringInterval);
-
-            if(tab === 'registrasi') {
-                regSec.classList.remove('hidden');
-                btnReg.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm";
-            } else if(tab === 'dataklien') {
-                dataKlienSec.classList.remove('hidden');
-                btnDataKlien.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm";
-                loadDataKlien();
-            } else if(tab === 'monitoring') {
-                monSec.classList.remove('hidden');
-                btnMon.className = "px-4 py-1.5 rounded-lg text-xs font-bold transition bg-indigo-600 text-white shadow-sm";
-                setTimeout(() => {
-                    initMap();
-                    loadLokasiKlien();
-                    monitoringInterval = setInterval(loadLokasiKlien, 15000);
-                }, 200);
+        // ====================== API HELPER (sinkron dengan Code.gs v2) ======================
+        function cekForbidden(res) {
+            if (res && res.status === 'forbidden') {
+                sesiBerakhir();
+                throw new Error('forbidden');
             }
+            return res;
         }
 
-        function loadDataKlien() {
-            const tbody = document.getElementById('tabelDataKlien');
-            tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Memuat data klien...</td></tr>`;
+        async function apiGet(action, params = {}) {
+            const qs = new URLSearchParams({ key: API_KEY, action: action, token: superToken || '', ...params });
+            const res = await fetch(`${GAS_URL}?${qs.toString()}`);
+            return cekForbidden(await res.json());
+        }
 
-            fetch(`${GAS_URL}?key=${API_KEY}&action=getDataKlien`)
-            .then(res => res.json())
-            .then(resData => {
-                let data = resData.data || [];
-                if(data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Belum ada klien terdaftar.</td></tr>`;
-                    return;
-                }
-
-                tbody.innerHTML = "";
-                data.forEach(item => {
-                    let rawWa = item.wa.toString().replace(/[^0-9]/g, '');
-                    if(rawWa.startsWith('0')) {
-                        rawWa = '62' + rawWa.substring(1);
-                    }
-
-                    let pesanWa = `terima kasih ${item.nama_resto} sudah menggunakan layanan QRMENU-PRO. Semoga bisnisnya Lancar,selalu sehat,dan keberkahan selalu mengiringi anda`;
-                    let waLink = `https://wa.me/${rawWa}?text=${encodeURIComponent(pesanWa)}`;
-
-                    let row = `
-                        <tr class="hover:bg-slate-50 transition">
-                            <td class="p-4 font-bold text-slate-900">🏢 ${item.nama_resto}</td>
-                            <td class="p-4 font-mono text-xs bg-slate-50/50">${item.username}</td>
-                            <td class="p-4 font-mono text-xs bg-slate-50/50">${item.password}</td>
-                            <td class="p-4 text-slate-600">${item.email}</td>
-                            <td class="p-4 text-slate-600">📱 ${item.wa}</td>
-                            <td class="p-4 text-center">
-                                <a href="${waLink}" target="_blank" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-sm shadow-emerald-600/20">
-                                    💬 Chat WhatsApp
-                                </a>
-                            </td>
-                        </tr>
-                    `;
-                    tbody.innerHTML += row;
-                });
-            }).catch(() => {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-rose-500">Gagal memuat data dari server.</td></tr>`;
+        async function apiPost(action, payload = {}) {
+            const res = await fetch(GAS_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({ key: API_KEY, action: action, token: superToken || '', ...payload })
             });
+            return cekForbidden(await res.json());
         }
 
-        function initMap() {
-            if (!map) {
-                map = L.map('map').setView([-6.9175, 107.6191], 13);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '&copy; OpenStreetMap contributors'
-                }).addTo(map);
-            } else {
-                map.invalidateSize();
-            }
+        // ====================== UTIL ======================
+        function esc(v) {
+            return String(v === undefined || v === null ? '' : v).replace(/[&<>"']/g, c => (
+                { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+            ));
         }
 
-        function loadLokasiKlien() {
-            fetch(`${GAS_URL}?key=${API_KEY}&action=getLokasiKlien`)
-            .then(res => res.json())
-            .then(resData => {
-                if(map) {
-                    markersLayer.forEach(m => map.removeLayer(m));
-                    markersLayer = [];
-
-                    let listContainer = document.getElementById("listClientContainer");
-                    listContainer.innerHTML = "";
-
-                    let data = resData.data || [];
-                    if(data.length === 0) {
-                        listContainer.innerHTML = `<small class="text-slate-400 text-center block mt-10">Belum ada klien terdaftar.</small>`;
-                        return;
-                    }
-
-                    data.forEach(item => {
-                        if(item.latitude && item.longitude) {
-                            let popupText = `<b>${item.nama_resto}</b><br>Alamat: ${item.alamat}<br>Update: ${item.waktu}`;
-                            let marker = L.marker([item.latitude, item.longitude]).addTo(map).bindPopup(popupText);
-                            markersLayer.push(marker);
-
-                            let itemHtml = `
-                                <div class="client-item p-3 bg-slate-50 border border-slate-200 rounded-2xl cursor-pointer" onclick="panToLocation(${item.latitude}, ${item.longitude})">
-                                    <strong class="text-slate-900 text-xs">🏢 ${item.nama_resto}</strong><br>
-                                    <small class="text-slate-600 text-[11px]">📍 ${item.alamat}</small><br>
-                                    <small class="text-indigo-600 font-semibold text-[11px]">🕒 ${item.waktu}</small>
-                                </div>`;
-                            listContainer.innerHTML += itemHtml;
-                        }
-                    });
-                }
-            }).catch(() => {});
+        function toast(msg, type) {
+            const colors = { ok: 'bg-emerald-600', error: 'bg-rose-600', warn: 'bg-amber-600' };
+            const el = document.createElement('div');
+            el.className = `${colors[type || 'ok'] || colors.ok} text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-xl`;
+            el.textContent = msg;
+            document.getElementById('toastBox').appendChild(el);
+            setTimeout(() => el.remove(), 4500);
         }
 
-        function panToLocation(lat, lon) {
-            if(map) { map.setView([lat, lon], 16); }
+        function formatNomorWA(nomor) {
+            let raw = String(nomor === undefined || nomor === null ? '' : nomor).replace(/\D/g, '');
+            if (!raw) return '';
+            if (raw.startsWith('0')) raw = '62' + raw.substring(1);
+            else if (!raw.startsWith('62')) raw = '62' + raw;
+            return raw;
         }
 
-        document.getElementById('formLoginSuper').addEventListener('submit', function(e) {
+        function validLatLon(lat, lon) {
+            lat = Number(lat); lon = Number(lon);
+            return isFinite(lat) && isFinite(lon) && !(lat === 0 && lon === 0);
+        }
+
+        // ====================== INISIALISASI ======================
+        window.addEventListener('DOMContentLoaded', async () => {
+            superToken = bacaSesi();
+            if (!superToken) { tampilkanLogin(); return; }
+
+            tampilkanDashboard();
+            // Verifikasi token ke server di latar belakang
+            try { await apiGet('cekSuper'); } catch (e) { /* forbidden ditangani di cekForbidden */ }
+        });
+
+        // ====================== LOGIN ======================
+        document.getElementById('formLoginSuper').addEventListener('submit', async function (e) {
             e.preventDefault();
             const u = document.getElementById('superUser').value.trim();
             const p = document.getElementById('superPass').value.trim();
@@ -423,75 +412,325 @@
             const btn = document.getElementById('btnSuperLogin');
 
             btn.disabled = true;
-            btn.innerText = "Memeriksa Akun...";
+            btn.textContent = "Memeriksa Akun...";
             err.classList.add('hidden');
 
-            let deviceId = localStorage.getItem('qrmenu_super_device_id');
-            if (!deviceId) {
-                deviceId = 'SA-DEV-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-                localStorage.setItem('qrmenu_super_device_id', deviceId);
-            }
-
-            fetch(`${GAS_URL}?key=${API_KEY}&action=loginSuper&userid=${encodeURIComponent(u)}&password=${encodeURIComponent(p)}&device_id=${deviceId}`)
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    localStorage.setItem('qrmenu_super_logged_in', 'true');
-                    document.getElementById('loginSuperSection').classList.add('hidden');
-                    document.getElementById('dashboardSuperSection').classList.remove('hidden');
+            try {
+                const qs = new URLSearchParams({ key: API_KEY, action: 'loginSuper', userid: u, password: p });
+                const res = await (await fetch(`${GAS_URL}?${qs.toString()}`)).json();
+                if (res.status === 'success' && res.token) {
+                    superToken = res.token;
+                    simpanSesi(res.token);
+                    document.getElementById('superPass').value = '';
+                    tampilkanDashboard();
                 } else {
-                    err.innerText = data.message || "Username atau Password Super Admin salah!";
+                    err.textContent = res.message || "Username atau Password Super Admin salah!";
                     err.classList.remove('hidden');
-                    btn.disabled = false;
-                    btn.innerText = "Masuk Super Admin";
                 }
-            }).catch(() => {
-                err.innerText = "Gagal terhubung ke server!";
+            } catch (ex) {
+                err.textContent = "Gagal terhubung ke server!";
                 err.classList.remove('hidden');
+            } finally {
                 btn.disabled = false;
-                btn.innerText = "Masuk Super Admin";
-            });
+                btn.textContent = "Masuk Super Admin";
+            }
         });
 
-        document.getElementById('formResto').addEventListener('submit', function(e) {
+        // ====================== TAB ======================
+        function switchSuperTab(tab) {
+            const sections = { registrasi: 'sectionRegistrasi', dataklien: 'sectionDataKlien', monitoring: 'sectionMonitoring' };
+            const buttons = { registrasi: 'btnTabRegistrasi', dataklien: 'btnTabDataKlien', monitoring: 'btnTabMonitoring' };
+
+            Object.keys(sections).forEach(k => {
+                document.getElementById(sections[k]).classList.toggle('hidden', k !== tab);
+                document.getElementById(buttons[k]).className = (k === tab) ? TAB_ACTIVE : TAB_IDLE;
+            });
+
+            if (monitoringInterval) { clearInterval(monitoringInterval); monitoringInterval = null; }
+
+            if (tab === 'dataklien') {
+                loadDataKlien();
+            } else if (tab === 'monitoring') {
+                setTimeout(() => {
+                    initMap();
+                    fitPending = true;
+                    loadLokasi(true);
+                    monitoringInterval = setInterval(() => { if (!document.hidden) loadLokasi(false); }, LOKASI_REFRESH_MS);
+                }, 200);
+            }
+        }
+
+        // ====================== REGISTRASI ======================
+        function buatPasswordAcak() {
+            const huruf = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            const arr = new Uint32Array(10);
+            crypto.getRandomValues(arr);
+            const pw = Array.from(arr).map(n => huruf[n % huruf.length]).join('');
+            const input = document.getElementById('password');
+            input.type = 'text';
+            input.value = pw;
+        }
+
+        function tampilkanAlert(tipe, html) {
+            const box = document.getElementById('alertBox');
+            box.className = tipe === 'ok'
+                ? 'rounded-3xl p-5 border bg-emerald-50 border-emerald-200 text-emerald-800'
+                : 'rounded-3xl p-5 border bg-rose-50 border-rose-200 text-rose-800';
+            box.innerHTML = html;
+        }
+
+        document.getElementById('formResto').addEventListener('submit', async function (e) {
             e.preventDefault();
             const btn = document.getElementById('btnSubmit');
             btn.disabled = true;
-            btn.innerText = "Memproses...";
+            btn.textContent = "Memproses...";
 
             const selectedPaket = document.querySelector('input[name="paket_langganan"]:checked');
             const durasiHari = selectedPaket ? selectedPaket.value : "30";
             const namaPaket = selectedPaket ? selectedPaket.getAttribute('data-nama') : "Paket Bulanan";
 
             const payload = {
-                key: API_KEY,
-                action: 'tambahResto',
-                nama: document.getElementById('nama').value,
-                nama_resto: document.getElementById('nama_resto').value.replace(/\s+/g, '_'),
-                wa: document.getElementById('wa').value,
-                email: document.getElementById('email').value,
-                alamat: document.getElementById('alamat').value,
-                username: document.getElementById('username').value,
+                nama: document.getElementById('nama').value.trim(),
+                nama_resto: document.getElementById('nama_resto').value.trim().replace(/\s+/g, '_'),
+                wa: document.getElementById('wa').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                alamat: document.getElementById('alamat').value.trim(),
+                username: document.getElementById('username').value.trim(),
                 password: document.getElementById('password').value,
                 durasi_hari: durasiHari,
                 paket: namaPaket
             };
 
-            fetch(GAS_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).then(() => {
-                setTimeout(() => {
-                    document.getElementById('alertBox').classList.remove('hidden');
-                    document.getElementById('alertMessage').innerText = `Bisnis "${payload.nama_resto}" berhasil didaftarkan dengan ${namaPaket} (${durasiHari} Hari)! Tab sheet & masa aktif lisensi telah dibuat.`;
+            try {
+                const res = await apiPost('tambahResto', payload);
+                if (res.status === 'success') {
+                    const waLink = linkWaKredensial(payload);
+                    tampilkanAlert('ok', `
+                        <h5 class="font-bold text-sm mb-1 text-emerald-900">Berhasil Didaftarkan!</h5>
+                        <p class="text-xs leading-relaxed">Bisnis <b>${esc(payload.nama_resto)}</b> aktif dengan ${esc(namaPaket)} (${esc(durasiHari)} hari). Tab menu & order sudah dibuat.</p>
+                        <div class="mt-3 p-3 bg-white/70 rounded-2xl text-xs font-mono space-y-0.5">
+                            <p>Username: <b>${esc(payload.username)}</b></p>
+                            <p>Password: <b>${esc(payload.password)}</b></p>
+                        </div>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <a href="${esc(waLink)}" target="_blank" rel="noopener" class="inline-block bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">💬 Kirim Kredensial via WhatsApp</a>
+                            ${res.drive_folder ? `<a href="${esc(res.drive_folder)}" target="_blank" rel="noopener" class="inline-block bg-white border border-emerald-300 text-emerald-800 text-xs font-bold px-3.5 py-2 rounded-xl">📁 Folder Drive Klien</a>` : ''}
+                        </div>`);
                     document.getElementById('formResto').reset();
-                    btn.disabled = false;
-                    btn.innerText = "Simpan & Generate Sistem";
-                }, 1500);
-            });
+                    document.getElementById('password').type = 'password';
+                } else {
+                    tampilkanAlert('error', `
+                        <h5 class="font-bold text-sm mb-1">Pendaftaran Gagal</h5>
+                        <p class="text-xs leading-relaxed">${esc(res.message || 'Server menolak permintaan.')}</p>`);
+                }
+            } catch (ex) {
+                if (ex.message !== 'forbidden') {
+                    tampilkanAlert('error', `<h5 class="font-bold text-sm mb-1">Gagal Terhubung</h5><p class="text-xs">Periksa koneksi internet lalu coba lagi.</p>`);
+                }
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Simpan & Generate Sistem";
+            }
         });
+
+        function linkWaKredensial(p) {
+            const baris = [
+                `Halo ${p.nama}, akun QRMenu-Pro untuk *${p.nama_resto.replace(/_/g, ' ')}* sudah aktif (${p.paket}).`,
+                ``,
+                `Username: ${p.username}`,
+                `Password: ${p.password}`
+            ];
+            if (PANEL_KLIEN_URL) baris.push(``, `Login di: ${PANEL_KLIEN_URL}`);
+            baris.push(``, `Mohon simpan data ini dengan aman. Terima kasih sudah menggunakan layanan QRMENU-PRO.`);
+            return `https://wa.me/${formatNomorWA(p.wa)}?text=${encodeURIComponent(baris.join('\n'))}`;
+        }
+
+        // ====================== DATA KLIEN ======================
+        async function loadDataKlien() {
+            const tbody = document.getElementById('tabelDataKlien');
+            tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">Memuat data klien...</td></tr>`;
+            try {
+                const res = await apiGet('getDataKlien');
+                dataKlienCache = Array.isArray(res.data) ? res.data : [];
+                renderDataKlien();
+            } catch (ex) {
+                if (ex.message !== 'forbidden') {
+                    tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-rose-500">Gagal memuat data dari server.</td></tr>`;
+                }
+            }
+        }
+
+        function badgeMasaAktif(item) {
+            if (item.sisa_hari === null || item.sisa_hari === undefined) return '<span class="text-slate-400 text-xs">-</span>';
+            const s = Number(item.sisa_hari);
+            let cls = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+            let teks = `${s} hari lagi`;
+            if (s < 0) { cls = 'bg-rose-50 text-rose-700 border-rose-200'; teks = `Expired ${Math.abs(s)} hari`; }
+            else if (s <= 7) { cls = 'bg-amber-50 text-amber-700 border-amber-200'; }
+            return `<span class="inline-block text-[11px] font-bold px-2.5 py-1 rounded-lg border ${cls}">${esc(teks)}</span>`;
+        }
+
+        function renderDataKlien() {
+            const tbody = document.getElementById('tabelDataKlien');
+            const q = (document.getElementById('cariKlien').value || '').trim().toLowerCase();
+
+            const daftar = dataKlienCache
+                .map((it, i) => Object.assign({ _i: i }, it))
+                .filter(it => !q || [it.nama_resto, it.nama, it.username, it.wa, it.email].some(v => String(v || '').toLowerCase().indexOf(q) !== -1));
+
+            document.getElementById('infoJumlahKlien').textContent =
+                `Menampilkan ${daftar.length} dari ${dataKlienCache.length} klien terdaftar.`;
+
+            if (daftar.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">${dataKlienCache.length === 0 ? 'Belum ada klien terdaftar.' : 'Tidak ada klien yang cocok dengan pencarian.'}</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = daftar.map(item => {
+                const pesanWa = `Terima kasih ${String(item.nama_resto || '').replace(/_/g, ' ')} sudah menggunakan layanan QRMENU-PRO. Semoga bisnisnya lancar, selalu sehat, dan keberkahan selalu mengiringi Anda.`;
+                const waLink = `https://wa.me/${formatNomorWA(item.wa)}?text=${encodeURIComponent(pesanWa)}`;
+                const device = item.device_terkunci
+                    ? '<span class="text-[11px] font-bold px-2.5 py-1 rounded-lg border bg-indigo-50 text-indigo-700 border-indigo-200">🔒 Terkunci</span>'
+                    : '<span class="text-[11px] font-bold px-2.5 py-1 rounded-lg border bg-slate-50 text-slate-500 border-slate-200">Belum login</span>';
+
+                return `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-4 font-bold text-slate-900">🏢 ${esc(item.nama_resto)}<div class="text-[11px] font-medium text-slate-400">${esc(item.nama)}</div></td>
+                        <td class="p-4 font-mono text-xs">${esc(item.username)}</td>
+                        <td class="p-4 font-mono text-xs whitespace-nowrap">
+                            <span id="pw_${item._i}">••••••••</span>
+                            <button onclick="togglePw(${item._i})" class="ml-1.5 text-[11px] text-indigo-600 hover:text-indigo-800 font-bold" title="Tampilkan/sembunyikan">👁</button>
+                        </td>
+                        <td class="p-4 text-slate-600">${esc(item.email)}</td>
+                        <td class="p-4 text-slate-600 whitespace-nowrap">📱 ${esc(item.wa)}</td>
+                        <td class="p-4">
+                            <div class="text-xs font-bold text-slate-800">${esc(item.paket || '-')}</div>
+                            <div class="mt-1">${badgeMasaAktif(item)}</div>
+                            <div class="text-[11px] text-slate-400 mt-0.5">s/d ${esc(item.expired || '-')}</div>
+                        </td>
+                        <td class="p-4">${device}</td>
+                        <td class="p-4 text-center">
+                            <a href="${esc(waLink)}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition shadow-sm shadow-emerald-600/20">💬 Chat WA</a>
+                        </td>
+                    </tr>`;
+            }).join('');
+        }
+
+        function togglePw(i) {
+            const el = document.getElementById('pw_' + i);
+            const item = dataKlienCache[i];
+            if (!el || !item) return;
+            const tersembunyi = el.textContent === '••••••••';
+            el.textContent = tersembunyi ? String(item.password || '') : '••••••••';
+        }
+
+        // ====================== PETA / MONITORING ======================
+        function initMap() {
+            if (!map) {
+                map = L.map('map').setView([-6.9175, 107.6191], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+                markersGroup = L.layerGroup().addTo(map);
+            } else {
+                map.invalidateSize();
+            }
+        }
+
+        function setLokasiMode(mode) {
+            lokasiMode = mode;
+            document.getElementById('btnModeKlien').className = mode === 'klien' ? MODE_ACTIVE : MODE_IDLE;
+            document.getElementById('btnModePembeli').className = mode === 'pembeli' ? MODE_ACTIVE : MODE_IDLE;
+            document.getElementById('btnModeSemua').className = mode === 'semua' ? MODE_ACTIVE : MODE_IDLE;
+            fitPending = true;
+            renderLokasi();
+        }
+
+        async function loadLokasi(fit) {
+            if (fit) fitPending = true;
+            try {
+                const [resK, resP] = await Promise.all([apiGet('getLokasiKlien'), apiGet('getLokasiKonsumen')]);
+                dataLokKlien = (Array.isArray(resK.data) ? resK.data : []).filter(d => validLatLon(d.latitude, d.longitude));
+                dataLokPembeli = (Array.isArray(resP.data) ? resP.data : []).filter(d => validLatLon(d.latitude, d.longitude));
+                document.getElementById('infoUpdateMap').textContent = 'Diperbarui ' + new Date().toLocaleTimeString('id-ID');
+                renderLokasi();
+            } catch (ex) {
+                if (ex.message !== 'forbidden') {
+                    document.getElementById('infoUpdateMap').textContent = 'Gagal memperbarui data';
+                }
+            }
+        }
+
+        function renderLokasi() {
+            if (!map) return;
+            markersGroup.clearLayers();
+            markerRefs = {};
+
+            const list = document.getElementById('listClientContainer');
+            const bounds = [];
+            let html = '';
+
+            if (lokasiMode === 'klien' || lokasiMode === 'semua') {
+                html += `<h5 class="text-sm font-bold text-indigo-600 border-b border-slate-100 pb-2 mb-2">🏢 Klien (${dataLokKlien.length})</h5>`;
+                if (dataLokKlien.length === 0) {
+                    html += `<small class="text-slate-400 block text-center py-4">Belum ada klien yang mengirim lokasi.</small>`;
+                }
+                dataLokKlien.forEach((it, i) => {
+                    const key = 'k' + i;
+                    const lat = Number(it.latitude), lon = Number(it.longitude);
+                    const m = L.circleMarker([lat, lon], { radius: 10, color: '#4338ca', weight: 2, fillColor: '#6366f1', fillOpacity: 0.9 })
+                        .bindPopup(`<b>🏢 ${esc(it.nama_resto)}</b><br>Alamat: ${esc(it.alamat)}<br>User: ${esc(it.username)}<br>Update: ${esc(it.waktu)}`);
+                    markersGroup.addLayer(m);
+                    markerRefs[key] = m;
+                    bounds.push([lat, lon]);
+                    html += `
+                        <div class="client-item p-3 bg-slate-50 border border-slate-200 rounded-2xl mb-2" onclick="fokusMarker('${key}')">
+                            <strong class="text-slate-900 text-xs">🏢 ${esc(it.nama_resto)}</strong><br>
+                            <small class="text-slate-600 text-[11px]">📍 ${esc(it.alamat)}</small><br>
+                            <small class="text-indigo-600 font-semibold text-[11px]">🕒 ${esc(it.waktu)}</small>
+                        </div>`;
+                });
+            }
+
+            if (lokasiMode === 'pembeli' || lokasiMode === 'semua') {
+                html += `<h5 class="text-sm font-bold text-emerald-600 border-b border-slate-100 pb-2 mb-2 ${lokasiMode === 'semua' ? 'mt-4' : ''}">🙋 Pembeli (${dataLokPembeli.length})</h5>`;
+                if (dataLokPembeli.length === 0) {
+                    html += `<small class="text-slate-400 block text-center py-4">Belum ada pembeli yang mengirim lokasi.</small>`;
+                }
+                dataLokPembeli.forEach((it, i) => {
+                    const key = 'p' + i;
+                    const lat = Number(it.latitude), lon = Number(it.longitude);
+                    const m = L.circleMarker([lat, lon], { radius: 7, color: '#047857', weight: 2, fillColor: '#10b981', fillOpacity: 0.9 })
+                        .bindPopup(`<b>🙋 ${esc(it.nama_pemesan)}</b><br>${esc(it.alamat)}<br>WA: ${esc(it.wa)}<br>Update: ${esc(it.waktu)}`);
+                    markersGroup.addLayer(m);
+                    markerRefs[key] = m;
+                    bounds.push([lat, lon]);
+                    html += `
+                        <div class="client-item p-3 bg-slate-50 border border-slate-200 rounded-2xl mb-2" onclick="fokusMarker('${key}')">
+                            <strong class="text-slate-900 text-xs">🙋 ${esc(it.nama_pemesan)}</strong><br>
+                            <small class="text-slate-600 text-[11px]">${esc(it.alamat)}</small><br>
+                            <small class="text-emerald-600 font-semibold text-[11px]">🕒 ${esc(it.waktu)}</small>
+                        </div>`;
+                });
+            }
+
+            list.innerHTML = html;
+
+            // Zoom otomatis hanya saat dibuka / refresh manual / ganti mode, agar tidak mengganggu saat peta digeser
+            if (fitPending && bounds.length > 0) {
+                map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
+                fitPending = false;
+            }
+        }
+
+        function fokusMarker(key) {
+            const m = markerRefs[key];
+            if (m && map) {
+                map.setView(m.getLatLng(), 17);
+                m.openPopup();
+            }
+        }
     </script>
 </body>
 </html>
